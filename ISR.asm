@@ -1,6 +1,6 @@
 ; ISR.asm
-; Name: Kameron Davis
-; UTEid: kad3346
+; Name: Kameron Davis and Albert Xia
+; UTEid: kad3346 and ax463
 ; Keyboard ISR runs when a key is struck
 ; Checks for a valid RNA symbol and places it at x4600
 .ORIG x2600

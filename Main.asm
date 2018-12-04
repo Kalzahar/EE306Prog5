@@ -1,6 +1,6 @@
 ; Main.asm
-; Name: Kameron Davis
-; UTEid: kad3346
+; Name: Kameron Davis and Albert Xia
+; UTEid: kad3346 and ax463
 ; Continuously reads from x4600 making sure its not reading duplicate
 ; symbols. Processes the symbol based on the program description
 ; of mRNA processing.
