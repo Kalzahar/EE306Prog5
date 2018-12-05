@@ -26,16 +26,19 @@
 	AND R3,R3,0			; Clear R3
 	LD R2,NEGA			; R2 -->-65
 	ADD R2,R2,R0		;Check to see if there is a character in x4600
-	BRn loop
-	BRz Aone
+	BRn loop	
 	ADD R3,R1,-1		;Check to see if char is in second phase
 	BRz Utwo
 	AND R3,R3,0			;Clear R3
 	ADD R3,R1,-2		; Check to see if char is in final phase
 	BRz Gthree
-	
+	ADD R3,R1,-3		; Check to see if char is inside the Start codon
+	BRz insideStart
+	ADD R2,R2,0
+	BRz Aone
+	; R1 will be our phase counter before the start codon
 	noOrder
-	TRAP x21			;Prints char
+	TRAP x21			; Prints char
 	AND R1,R1,0			; Make sure R1 is set to phase 0
 	BRnzp reset
 	
@@ -47,7 +50,7 @@
 	
 	Utwo
 	LD R2,NEGU
-	ADD R2,R2,R0		;Check to see if the next char is a U 
+	ADD R2,R2,R0		; Check to see if the next char is a U 
 	BRnp noOrder
 	TRAP x21
 	AND R1,R1,0			; Sets R1 to zero 
@@ -56,18 +59,39 @@
 	
 	Gthree
 	LD R2,NEGG
-	Add R2,R2,R0		; Check to see if next char is a G 
+	ADD R2,R2,R0		; Check to see if next char is a G 
 	BRnp noOrder
 	TRAP x21
 	AND R1,R1,0
+	ADD R1,R1,3			; Tells PC we are in the inside phase
 	LD R0,pipe
 	TRAP x21
+	BRnzp reset
+	; R4 will be our phase counter for the codons inside the start codon
+	insideStart
+	LD R2,NEGU
+	AND R3,R3,0
+	ADD R2,R2,R0
+	BRz	Uend
 	
+	RandomJunk
+	TRAP x21
+	AND R4,R0,0			; Make sure to stay in initial phase
+	BRnzp reset
+	
+	Uend
+	TRAP x21
+	AND R4,R4,0
+	ADD R4,R4,1			; Moves to phase 1
+	BRnzp reset
+	
+
 	reset
 	AND R0,R0,0			; Clear R0
 	STI R0,MAILOUT		
 	BRnzp loop
 	
+
 
 Stack .FILL x4000
 IVT .FILL x0180
