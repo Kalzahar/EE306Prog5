@@ -15,12 +15,17 @@
 	STI R0, IVT
 
 ; enable keyboard interrupts
+	AND R0,R0,0
+	AND R1,R1,0
+	AND R2,R2,0
+	AND R3,R3,0
+	AND R4,R4,0			; Clear registers before loop in case the user wants to re run the program.
 	loop
 	LD R0, KBENABLE		; Load into R0 the value to set bit 14 to 1
 	STI R0, KBSR		; Set bit 14 of KBSR to 1
 
 ; start of actual program
-
+	
 	LD R0, MAILOUT		; Load char into R0
 	LDR R0,R0,0
 	AND R3,R3,0			; Clear R3
@@ -49,6 +54,9 @@
 	BRnzp reset
 	
 	Utwo
+	LD R2,NEGA
+	ADD R2,R2,R0
+	BRz Aone
 	LD R2,NEGU
 	ADD R2,R2,R0		; Check to see if the next char is a U 
 	BRnp noOrder
@@ -73,6 +81,11 @@
 	AND R3,R3,0
 	ADD R2,R2,R0
 	BRz	Uend
+	ADD R3,R4,-1		; Check to see if char is in second phase
+	BRz AGend
+	AND R3,R3,0			; Clear R3
+	ADD R3,R4,-2		; Check to see if char is in final phase
+	BRz Finale
 	
 	RandomJunk
 	TRAP x21
@@ -85,13 +98,46 @@
 	ADD R4,R4,1			; Moves to phase 1
 	BRnzp reset
 	
-
+	AGend
+	LD R2,NEGA
+	ADD R2,R2,R0		; Check to see if R0 is A 
+	BRz GAend
+	LD R2,NEGG			; Check to see if R0 is G 
+	ADD R2,R2,R0		
+	BRz GAend
+	BRnzp RandomJunk
+	
+	GAend
+	ST R0,SECONDCHAR	; Store second character for final phase
+	TRAP x21
+	AND R4,R4,0
+	ADD R4,R4,2			; Moves R4 to the final phase
+	BRnzp reset
+	
+	Finale
+	LD R2,NEGA
+	ADD R2,R2,R0
+	BRz bye
+	LD R5,SECONDCHAR	; If the second char was an A then we must check for G for the final char as well
+	LD R2,NEGA
+	ADD R2,R2,R5		;Check to see if second char was ADD
+	BRz Gend
+	BRnzp RandomJunk
+	
+	Gend
+	LD R2,NEGG
+	ADD R2,R2,R0
+	BRz bye
+	
 	reset
 	AND R0,R0,0			; Clear R0
 	STI R0,MAILOUT		
 	BRnzp loop
 	
-
+	bye
+	TRAP X21
+	TRAP x25
+	
 
 Stack .FILL x4000
 IVT .FILL x0180
@@ -99,6 +145,7 @@ INTERRUPT .FILL x2600
 KBENABLE .FILL x4000
 KBSR .FILL xFE00
 MAILOUT .FILL x4600
+SECONDCHAR .BLKW 1
 NEGA .FILL -65
 NEGC .FILL -67
 NEGG .FILL -71
