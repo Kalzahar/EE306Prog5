@@ -5,10 +5,10 @@
 ; Checks for a valid RNA symbol and places it at x4600
 .ORIG x2600
 	
-	ST R0, SR0
-	ST R1, SR1		; Save registers that will be modified
+	ST R0, SR0			
+	ST R1,SR1		; Save registers that will be modified
 	
-	LD R0, KBDR		; Put the current char in R0
+	LDI R0, KBDR	; Put the current char in R0
 	
 	; Check A
 	LD R1, NEGA		; -A -> R1
@@ -33,6 +33,8 @@
 	BRnzp Invalid
 	
 	Valid
+	AND R1,R1,0		;Clear R1
+	ADD R1,R1,1		;Put a 1 in R1
 	STI R0, MAILIN
 	
 	Invalid	
