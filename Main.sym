@@ -1,7 +1,28 @@
 //Symbol Name		Page Address
 //----------------	------------
-//	INTERRUPT               4008
-//	IVT                     4007
-//	KBENABLE                4009
-//	KBSR                    400A
-//	Stack                   4006
+//	AGend                   4043
+//	Aone                    401C
+//	Finale                  404F
+//	GAend                   404A
+//	Gend                    4057
+//	Gthree                  402A
+//	INTERRUPT               4063
+//	IVT                     4062
+//	KBENABLE                4064
+//	KBSR                    4065
+//	MAILOUT                 4066
+//	NEGA                    4068
+//	NEGC                    4069
+//	NEGG                    406A
+//	NEGU                    406B
+//	RandomJunk              403C
+//	SECONDCHAR              4067
+//	Stack                   4061
+//	Uend                    403F
+//	Utwo                    4020
+//	bye                     405D
+//	insideStart             4033
+//	loop                    400A
+//	noOrder                 4019
+//	pipe                    406C
+//	reset                   405A

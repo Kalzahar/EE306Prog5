@@ -20,26 +20,27 @@
 	AND R2,R2,0
 	AND R3,R3,0
 	AND R4,R4,0			; Clear registers before loop in case the user wants to re run the program.
-	loop
+	
 	LD R0, KBENABLE		; Load into R0 the value to set bit 14 to 1
 	STI R0, KBSR		; Set bit 14 of KBSR to 1
 
 ; start of actual program
+loop
+	LD R0, MAILOUT		; Load address of the current char into R0
+	LDR R0, R0, 0		; Load actual current char into R0
 	
-	LD R0, MAILOUT		; Load char into R0
-	LDR R0,R0,0
 	AND R3,R3,0			; Clear R3
-	LD R2,NEGA			; R2 -->-65
-	ADD R2,R2,R0		;Check to see if there is a character in x4600
-	BRn loop	
-	ADD R3,R1,-1		;Check to see if char is in second phase
+	LD R2,NEGA			; R2 = -A
+	ADD R2,R2,R0		; Try to compare -A to the value in x4600
+	BRn loop
+	ADD R3,R1,-1		; Check to see if char is in second phase
 	BRz Utwo
-	AND R3,R3,0			;Clear R3
+	AND R3,R3,0			; Clear R3
 	ADD R3,R1,-2		; Check to see if char is in final phase
 	BRz Gthree
 	ADD R3,R1,-3		; Check to see if char is inside the Start codon
 	BRz insideStart
-	ADD R2,R2,0
+	ADD R2,R2,0			; If the current character was actually an A and we aren't in a different phase, go to Aone
 	BRz Aone
 	; R1 will be our phase counter before the start codon
 	noOrder
@@ -135,7 +136,9 @@
 	BRnzp loop
 	
 	bye
-	TRAP X21
+	TRAP x21
+	AND R0, R0, 0
+	STI R0, MAILOUT		; Clear the mailbox to prepare for a reload
 	TRAP x25
 	
 
