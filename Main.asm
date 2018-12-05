@@ -26,13 +26,10 @@
 
 ; start of actual program
 loop
-	LD R0, MAILOUT		; Load address of the current char into R0
-	LDR R0, R0, 0		; Load actual current char into R0
+	LDI R0, MAILOUT		; Load in the current value at x4600
+	BRz loop			; If there was nothing, check again
 	
-	AND R3,R3,0			; Clear R3
-	LD R2,NEGA			; R2 = -A
-	ADD R2,R2,R0		; Try to compare -A to the value in x4600
-	BRn loop
+	AND R3, R3, 0		; Clear R3
 	ADD R3,R1,-1		; Check to see if char is in second phase
 	BRz Utwo
 	AND R3,R3,0			; Clear R3
