@@ -23,12 +23,47 @@
 
 	LD R0, MAILOUT		; Load char into R0
 	LDR R0,R0,0
+	AND R3,R3,0			; Clear R3
 	LD R2,NEGA			; R2 -->-65
 	ADD R2,R2,R0		;Check to see if there is a character in x4600
-	BRzp prchar
-	BRnzp loop
-	prchar
+	BRn loop
+	BRz Aone
+	ADD R3,R1,-1		;Check to see if char is in second phase
+	BRz Utwo
+	AND R3,R3,0			;Clear R3
+	ADD R3,R1,-2		; Check to see if char is in final phase
+	BRz Gthree
+	
+	noOrder
+	TRAP x21			;Prints char
+	AND R1,R1,0			; Make sure R1 is set to phase 0
+	BRnzp reset
+	
+	Aone
 	TRAP x21			; Puts char onto screen
+	AND R1,R1,0			; Clears R1
+	ADD R1,R1,1			; Allows us to know that it is in the second phase
+	BRnzp reset
+	
+	Utwo
+	LD R2,NEGU
+	ADD R2,R2,R0		;Check to see if the next char is a U 
+	BRnp noOrder
+	TRAP x21
+	AND R1,R1,0			; Sets R1 to zero 
+	ADD R1,R1,2			; R1 should be 2 setting it into the next phase
+	BRnzp reset
+	
+	Gthree
+	LD R2,NEGG
+	Add R2,R2,R0		; Check to see if next char is a G 
+	BRnp noOrder
+	TRAP x21
+	AND R1,R1,0
+	LD R0,pipe
+	TRAP x21
+	
+	reset
 	AND R0,R0,0			; Clear R0
 	STI R0,MAILOUT		
 	BRnzp loop
@@ -44,4 +79,5 @@ NEGA .FILL -65
 NEGC .FILL -67
 NEGG .FILL -71
 NEGU .FILL -85
+pipe .FILL 124
 .END
