@@ -5,7 +5,7 @@
 ; Checks for a valid RNA symbol and places it at x4600
 .ORIG x2600
 	
-	ST R0, SR0			
+	ST R0, SR0
 	ST R1,SR1		; Save registers that will be modified
 	
 	LDI R0, KBDR	; Put the current char in R0
