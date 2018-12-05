@@ -22,7 +22,7 @@
 	
 	; Check G
 	LD R1, NEGG		; -G -> R1
-	ADD R1, R0, R1	; Char - G -> R1
+	ADD R1,R0,R1	;Char - G -> R1
 	BRz Valid
 	
 	; Check U
@@ -33,8 +33,6 @@
 	BRnzp Invalid
 	
 	Valid
-	AND R1,R1,0		;Clear R1
-	ADD R1,R1,1		;Put a 1 in R1
 	STI R0, MAILIN
 	
 	Invalid	
